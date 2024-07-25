@@ -45,8 +45,7 @@ function loadgraph(data) {
 
     // Check and adjust node positions
     checkAndAdjustNodePositions(graphData.nodes, data, width, height);
-    ensureMinNodePosition(graphData.nodes, data);
-    
+
     // Draw links
     drawLinks(svg, graphData, findNodeById);
 
@@ -110,9 +109,16 @@ function loadgraph(data) {
     } 
     
     function dragended(event, d) {
-        if (!event.active) 
-        d.fx = d.x;
-        d.fy = d.y;
+        // Update the original dataset with new positions
+        const originalNode = data.find(item => item.id === d.id);
+        if (originalNode) {
+            originalNode.fx = d.fx;
+            originalNode.fy = d.fy;
+        }
+        d3.select(this).classed("active", false);
+    
+        // Redraw links to ensure they are correctly positioned after drag ends
+        drawLinks(svg, graphData, findNodeById);
     }
 }
 
@@ -140,7 +146,6 @@ function drawLink(sourceId, targetId, type) {
 
 // Draws all links
 function drawLinks(svg, graphData, findNodeById) {
-    // Remove existing links
     svg.selectAll(".links").remove();
 
     return svg.append("g")
@@ -180,7 +185,6 @@ function updateNodeAndLinkPositions(d) {
     if (nodeInData) {
         nodeInData.fx = d.fx;
         nodeInData.fy = d.fy;
-        populateDetailsPanel(nodeInData); // Update the details panel
     }
 
     // Update visual representation of the node
@@ -213,18 +217,4 @@ function updateNodeAndLinkPositions(d) {
 
 function findNodeById(id) {
     return graphData.nodes.find(node => node.id === id);
-}
-
-function ensureMinNodePosition(nodes, data) {
-    nodes.forEach(node => {
-        const originalNode = data.find(item => item.id === node.id);
-        if (node.fx !== undefined && node.fx < 50) {
-            node.fx = 50;
-            if (originalNode) originalNode.fx = node.fx;
-        }
-        if (node.fy !== undefined && node.fy < 50) {
-            node.fy = 50;
-            if (originalNode) originalNode.fy = node.fy;
-        }
-    });
 }

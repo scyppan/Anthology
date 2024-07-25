@@ -38,12 +38,10 @@ function addNewRecord() {
     const svgHeight = document.getElementById('graph-container').offsetHeight;
 
     // Generate random fx and fy values near the upper left portion with minimum 100
-    let fx, fy;
-    do {
-        fx = Math.floor(Math.random() * (svgWidth / 4)) + 100; // Minimum 100, restricted to the left quarter
-        fy = Math.floor(Math.random() * (svgHeight / 4)) + 100; // Minimum 100, restricted to the upper quarter
-    } while (data.some(record => record.fx === fx && record.fy === fy));
-
+     // Generate random fx and fy values near the upper left portion with minimum 100
+     const fx = Math.floor(Math.random() * (svgWidth / 4)) + 100; // Minimum 100, restricted to the left quarter
+     const fy = Math.floor(Math.random() * (svgHeight / 4)) + 100; // Minimum 100, restricted to the upper quarter
+ 
     const newRecord = { id: uniqueId, links: [], fx, fy }; // Initialize new record with unique id, links, and position
 
     insertCommonKeys(newRecord); // Insert common keys into the new record
@@ -116,8 +114,17 @@ function updateData(updatedRecord, oldId) {
         });
     });
 
-    // Update treeview labels
-    if (document.getElementById('treeview')) {
+    let datasec = document.getElementById("dataview");
+    let listsec = document.getElementById("listview");
+    let treesec = document.getElementById("treeview");
+    let groupsec = document.getElementById("groupview");
+
+    if (listsec && !listsec.classList.contains('hidden')) {
+        createtablefromdata();
+    }
+
+    // Update treeview labels if needed
+    if (treesec && !treesec.classList.contains('hidden')) {
         loadgraph(data);
     }
 }
