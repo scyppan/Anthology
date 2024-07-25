@@ -1,8 +1,8 @@
 function generateUniqueId(baseId) {
     let uniqueId = baseId;
     let counter = 1;
-
-    while (data.some(record => record.id === uniqueId)) {
+    
+    while (data.some(record => record.id === uniqueId && record.id !== selectedRecord.id)) {
         uniqueId = `${baseId} ${counter}`;
         counter++;
     }

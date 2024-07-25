@@ -1,4 +1,5 @@
 document.getElementById('tree-search').addEventListener('input', function() {
+    document.getElementById('toggle-linked').checked = false;
     let query = document.getElementById('tree-search').value.trim();
     searchTree(query);
 });

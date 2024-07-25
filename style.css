@@ -399,3 +399,28 @@ body.link-mode-active {
     border-radius: 4px;
     flex-grow: 1;
 }
+
+#list-search-container {
+    padding: 10px;
+    background-color: #411818; /* Match the style */
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 20px;
+    margin-bottom: 10px; /* Add some space below the search bar */
+}
+
+#list-search {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex-grow: 1;
+    background-color: #f5f0f0; /* Match the background color */
+    color: #411818; /* Match the text color */
+}
+
+.linked-checkbox-label {
+    color: #411818;
+}

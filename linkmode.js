@@ -86,11 +86,6 @@ document.addEventListener('click', function(event) {
     }
 });
 
-
-
-
-
-
 function isUniqueLink(targetId, links) {
     return !links.some(link => link.target === targetId);
 }

@@ -1,4 +1,4 @@
-• Some function is setting all the fx and fy to 50 and everything clumps in the corner
 • Need a way to set the trees to grab different links in different ways (as it show only direct links / show indirect links)
 • Esc to exit link mode.
 • Can't link to self
+• Unhide the export as json if there is any data

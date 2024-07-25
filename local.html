@@ -16,6 +16,7 @@
     <script src="treesearch.js" defer></script>
     <script src="groupview.js" defer></script>
     <script src="save.js" defer></script>
+    <script src="showlinkedonly.js" defer></script>
     <script src="main.js" defer></script>
 </head>
 <body>
@@ -60,12 +61,11 @@
                 </div>
     
                 <div id="listview" class="window hidden">
-                
-                <br><hr><hr>
-                
-                <div id="table-container"></div>
-
-                </div>
+                    <div id="list-search-container">
+                        <input type="text" id="list-search" placeholder="Search records...">
+                    </div>
+                    <div id="table-container"></div>
+                </div>        
 
                 <div id="treeview" class="window hidden">
                     <div id="tree-search-container">

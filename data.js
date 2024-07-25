@@ -125,44 +125,17 @@ function updateData(updatedRecord, oldId) {
 
     // Update treeview labels if needed
     if (treesec && !treesec.classList.contains('hidden')) {
-        loadgraph(data);
+        const currentNodeIds = getCurrentGraphNodeIds();
+        const filteredData = data.filter(record => currentNodeIds.includes(record.id));
+        loadgraph(filteredData);
     }
 }
 
-function addGroup(record, groupTbody) {
-    const groupRow = document.createElement('tr');
-    const groupCell = document.createElement('td');
-    const groupInput = document.createElement('input');
-    groupInput.type = 'text';
-    groupInput.placeholder = 'New group';
-    groupInput.addEventListener('change', function() {
-        if (groupInput.value.trim() !== '') {
-            record.groups.push(groupInput.value);
-            updateData(record);
-            populateDetailsPanel(record); // Refresh the details panel to show the new group
-        } else {
-            groupRow.remove();
-        }
-    });
-    groupCell.appendChild(groupInput);
-    groupRow.appendChild(groupCell);
-
-    const deleteCell = document.createElement('td');
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = '⊖';
-    deleteButton.addEventListener('click', function() {
-        groupRow.remove();
-        const index = record.groups.indexOf(groupInput.value);
-        if (index !== -1) {
-            record.groups.splice(index, 1);
-            updateData(record);
-        }
-    });
-    deleteCell.appendChild(deleteButton);
-    groupRow.appendChild(deleteCell);
-
-    groupTbody.appendChild(groupRow);
-    groupInput.focus();
+function activateListSearch() {
+    const listSearchInput = document.getElementById('list-search');
+    if (listSearchInput) {
+        listSearchInput.focus();
+    }
 }
 
 function removeGroup(index, record) {

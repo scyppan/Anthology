@@ -71,3 +71,61 @@ function createRow(record, key, tbody) {
     row.appendChild(valueCell);
     tbody.appendChild(row);
 }
+
+function searchList(query) {
+    if (query === '') {
+        createtablefromdata(); // Load the full list if the query is empty
+        return;
+    }
+
+    const searchResults = data.filter(record => record.id.toLowerCase().includes(query));
+
+    createTableFromSearchResults(searchResults); // Function to display search results
+}
+
+function createTableFromSearchResults(results) {
+    const tableContainer = document.getElementById('table-container');
+    tableContainer.innerHTML = ''; // Clear the container before adding new content
+
+    if (!results || results.length === 0) {
+        tableContainer.innerHTML = 'No records found.';
+        return;
+    }
+
+    const table = document.createElement('table');
+    const tbody = document.createElement('tbody');
+
+    results.forEach(item => {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+
+        const recordDiv = document.createElement('div');
+        recordDiv.classList.add('data-record');
+        recordDiv.textContent = item.id;
+
+        recordDiv.addEventListener('click', () => {
+            populateDetailsPanel(item);
+        });
+
+        cell.appendChild(recordDiv);
+        row.appendChild(cell);
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+}
+
+document.getElementById('list-search').addEventListener('input', function() {
+    let query = this.value.trim().toLowerCase();
+    
+    // Disable the checkbox if there is any search query
+    const toggleLinkedCheckbox = document.getElementById('toggle-linked');
+    if (query) {
+        toggleLinkedCheckbox.checked = false;
+    }
+
+    searchList(query);
+});
+
+

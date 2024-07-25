@@ -1,5 +1,6 @@
 let svg;
 let graphData = null;
+let isDragging = false;
 
 // Converts data to nodes and links
 function convertDataToNodes(data) {
@@ -103,12 +104,14 @@ function loadgraph(data) {
     }
 
     function dragstarted(event, d) {
+        isDragging = true; // Set the flag to true during dragging
         if (!event.active) 
         d.fx = d.x;
         d.fy = d.y;
     } 
     
     function dragended(event, d) {
+        
         // Update the original dataset with new positions
         const originalNode = data.find(item => item.id === d.id);
         if (originalNode) {
@@ -116,9 +119,11 @@ function loadgraph(data) {
             originalNode.fy = d.fy;
         }
         d3.select(this).classed("active", false);
-    
+        
+        isDragging = false; 
+
         // Redraw links to ensure they are correctly positioned after drag ends
-        drawLinks(svg, graphData, findNodeById);
+        //drawLinks(svg, graphData, findNodeById);
     }
 }
 
@@ -127,31 +132,34 @@ function drawLink(sourceId, targetId, type) {
     const sourceNode = findNodeById(sourceId);
     const targetNode = findNodeById(targetId);
 
-    if (!sourceNode || !targetNode) return;
+    // Ensure both source and target nodes are found and have valid coordinates
+    if (!sourceNode || !targetNode || sourceNode.fx == null || sourceNode.fy == null || targetNode.fx == null || targetNode.fy == null) {
+        console.warn('Skipping link due to missing properties:', { sourceId, targetId });
+        return;
+    }
 
     // Add the new link to graphData.links
     graphData.links.push({ source: sourceId, target: targetId, type: type });
 
     // Re-bind the data to include the new link
-    const link = svg.selectAll(".links line")
-        .data(graphData.links)
-        .enter().append("line")
-        .attr("class", d => `link ${d.type}`)
-        .attr("stroke-width", 2)
-        .attr("x1", d => findNodeById(d.source).fx)
-        .attr("y1", d => findNodeById(d.source).fy)
-        .attr("x2", d => findNodeById(d.target).fx)
-        .attr("y2", d => findNodeById(d.target).fy);
+    updateLinks();
 }
 
-// Draws all links
-function drawLinks(svg, graphData, findNodeById) {
+function drawLinks() {
     svg.selectAll(".links").remove();
 
-    return svg.append("g")
+    // Filter out links where any of the coordinates are missing
+    const validLinks = graphData.links.filter(link => {
+        const sourceNode = findNodeById(link.source);
+        const targetNode = findNodeById(link.target);
+        return sourceNode && targetNode && sourceNode.fx != null && sourceNode.fy != null && targetNode.fx != null && targetNode.fy != null;
+    });
+
+    // Draw only valid links
+    svg.append("g")
         .attr("class", "links")
         .selectAll("line")
-        .data(graphData.links)
+        .data(validLinks)
         .enter().append("line")
         .attr("class", d => `link ${d.type}`)
         .attr("stroke-width", 2)
@@ -159,16 +167,6 @@ function drawLinks(svg, graphData, findNodeById) {
         .attr("y1", d => findNodeById(d.source).fy)
         .attr("x2", d => findNodeById(d.target).fx)
         .attr("y2", d => findNodeById(d.target).fy);
-}
-
-function dragged(event, d) {
-    d.fx = event.x;
-    d.fy = event.y;
-    d3.select(this).attr("cx", d.fx).attr("cy", d.fy);
-    d3.select(this).select("text").attr("x", d.fx).attr("y", d.fy);
-
-    // Update node and link positions
-    updateNodeAndLinkPositions(d);
 }
 
 // Updates node and link positions
@@ -218,3 +216,43 @@ function updateNodeAndLinkPositions(d) {
 function findNodeById(id) {
     return graphData.nodes.find(node => node.id === id);
 }
+
+function displayLinkedCharactersInGraph(record) {
+    // Find characters linked from the selected character
+    const linkedFromRecords = record.links.map(link => data.find(item => item.id === link.target)).filter(item => item);
+
+    // Find characters linking to the selected character
+    const linkedToRecords = data.filter(item => item.links.some(link => link.target === record.id));
+
+    // Combine and remove duplicates
+    const linkedRecords = [...new Set([...linkedFromRecords, ...linkedToRecords])];
+    console.log('Linked records:', linkedRecords);  // Log linked records for debugging
+
+    // Load the graph with the linked records
+    loadgraph(linkedRecords);
+}
+
+function updateLinks() {
+    drawLinks();
+}
+
+function getCurrentGraphNodeIds() {
+    const nodeIds = [];
+    d3.selectAll(".nodes circle").each(function(d) {
+        nodeIds.push(d.id);
+    });
+    return nodeIds;
+}
+
+function dragged(event, d) {
+    console.log("draging");
+    isDragging = true; // Set the flag to true during dragging
+    d.fx = event.x;
+    d.fy = event.y;
+    d3.select(this).attr("cx", d.fx).attr("cy", d.fy);
+    d3.select(this).select("text").attr("x", d.fx).attr("y", d.fy);
+
+    // Update node and link positions
+    updateNodeAndLinkPositions(d);
+}
+

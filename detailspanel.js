@@ -54,6 +54,8 @@ function deleteRecord(record) {
         // Refresh the table and clear the details panel
         createtablefromdata();
         document.getElementById('details-panel').innerHTML = 'Record deleted.';
+        toggleLinkedLabel.classList.add('hidden');
+        toggleLinkedCheckbox.classList.add('hidden');
 
         // Update the graph to reflect the deletion and link removals
         loadgraph(data);
@@ -132,10 +134,55 @@ function removeLink(index, button) {
     loadgraph(data);
 }
 
+function addGroup(record, groupTbody) {
+    const groupRow = document.createElement('tr');
+    const groupCell = document.createElement('td');
+    const groupInput = document.createElement('input');
+    groupInput.type = 'text';
+    groupInput.placeholder = 'New group';
+    groupInput.addEventListener('change', function() {
+        if (groupInput.value.trim() !== '') {
+            record.groups.push(groupInput.value);
+            updateData(record);
+            populateDetailsPanel(record); // Refresh the details panel to show the new group
+            activateListSearch(); // Activate search bar in list view
+        } else {
+            groupRow.remove();
+        }
+    });
+    groupCell.appendChild(groupInput);
+    groupRow.appendChild(groupCell);
+
+    const deleteCell = document.createElement('td');
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = '⊖';
+    deleteButton.addEventListener('click', function() {
+        groupRow.remove();
+        const index = record.groups.indexOf(groupInput.value);
+        if (index !== -1) {
+            record.groups.splice(index, 1);
+            updateData(record);
+            activateListSearch(); // Activate search bar in list view
+        }
+    });
+    deleteCell.appendChild(deleteButton);
+    groupRow.appendChild(deleteCell);
+
+    groupTbody.appendChild(groupRow);
+    groupInput.focus();
+}
+
 function populateDetailsPanel(record) {
     // Ensure every record has fx and fy keys
     record.fx = record.fx || '';
     record.fy = record.fy || '';
+
+    if (record.fx < 75) {
+        record.fx = randbetween(75, 150);
+    }
+    if (record.fy < 75) {
+        record.fy = randbetween(75, 150);
+    }
 
     const detailsPanel = document.getElementById('details-panel');
     detailsPanel.innerHTML = ''; // Clear the details panel
@@ -155,31 +202,33 @@ function populateDetailsPanel(record) {
         const valueInput = document.createElement('input');
         valueInput.type = 'text';
         valueInput.value = record[key];
-        if (key === 'fx' || key === 'fy') {
-            //valueInput.disabled = true; // Make fx and fy non-editable
-        } else if (key === 'id') {
-            valueInput.addEventListener('change', function() {
+        valueInput.addEventListener('change', function() {
+            record[key] = valueInput.value;
+            if (key === 'id') {
                 const oldId = record.id;
-                const newId = generateUniqueId(valueInput.value);
-                record[key] = newId;
+                record.id = generateUniqueId(valueInput.value);
                 updateData(record, oldId); // Update data with oldId for reference
-                populateDetailsPanel(record); // Refresh the details panel to show the updated id
-            });
-        }
+            } else {
+                updateData(record);
+            }
+            populateDetailsPanel(record); // Refresh the details panel to show the updated values
+        });
         valueCell.appendChild(valueInput);
         row.appendChild(valueCell);
 
         tbody.appendChild(row);
     });
 
-    // Original loop to handle other keys, unchanged
+    table.appendChild(tbody);
+    detailsPanel.appendChild(table);
+
+    // Populate other fields
     Object.keys(record).forEach(key => {
-        if (key !== 'links' && key !== 'notes' && key !== 'groups' && key !== 'id' && key !== 'fx' && key !== 'fy') { // Exclude 'links', 'notes', 'groups', 'id', 'fx', 'fy' from key-value pairs
+        if (key !== 'links' && key !== 'notes' && key !== 'groups' && key !== 'id' && key !== 'fx' && key !== 'fy') {
             createRow(record, key, tbody);
         }
     });
 
-    table.appendChild(tbody);
     detailsPanel.appendChild(table);
 
     // Ensure nodeName element exists
@@ -189,7 +238,30 @@ function populateDetailsPanel(record) {
     nodeNameInput.dataset.nodeId = record.id;
     detailsPanel.appendChild(nodeNameInput);
 
-    // Add a button to add a new key-value pair below the table
+    // Add the "Show only linked" checkbox
+    const toggleLinkedContainer = document.createElement('div');
+    toggleLinkedContainer.id = 'toggle-linked-container';
+
+    // Append the global toggleLinkedLabel element to the container
+    toggleLinkedContainer.appendChild(toggleLinkedLabel);
+    // Append the container to the details panel
+    detailsPanel.appendChild(toggleLinkedContainer);
+    toggleLinkedLabel.classList.remove('hidden');
+    toggleLinkedCheckbox.classList.remove('hidden');
+
+    // Add event listener for the checkbox
+    
+    if (toggleLinkedCheckbox) {
+        toggleLinkedCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                displayLinkedCharacters(record);
+            } else {
+                createtablefromdata(); // Re-display the full list when checkbox is unchecked
+            }
+        });
+    }
+
+    // Add a button to add a new key-value pair below the table and checkbox
     const addButton = document.createElement('button');
     addButton.textContent = 'Add new key-value pair';
     addButton.classList.add("btn");
@@ -312,4 +384,22 @@ function populateDetailsPanel(record) {
         deleteRecord(record); // Function to delete the record
     });
     detailsPanel.appendChild(deleteButton);
+}
+
+function displayLinkedCharacters(record) {
+    const listSearchInput = document.getElementById('list-search');
+    const toggleLinkedCheckbox = document.getElementById('toggle-linked');
+
+    if (!listSearchInput || !toggleLinkedCheckbox) {
+        console.error('Error: list-search input or toggle-linked checkbox not found.');
+        return;
+    }
+
+    if (toggleLinkedCheckbox.checked) { // Proceed only if the checkbox is checked
+        const linkedFromRecords = record.links.map(link => data.find(item => item.id === link.target)).filter(item => item);
+        const linkedToRecords = data.filter(item => item.links.some(link => link.target === record.id));
+        const linkedRecords = [...new Set([...linkedFromRecords, ...linkedToRecords])];
+
+        createTableFromSearchResults(linkedRecords); // Function to display search results
+    }
 }

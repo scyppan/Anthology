@@ -1,4 +1,5 @@
 document.getElementById('group-search').addEventListener('input', function() {
+    document.getElementById('toggle-linked').checked = false;
     let query = this.value.trim();
     if (query === '') {
         displayAllGroups(); // Display all groups if query is empty
@@ -6,7 +7,6 @@ document.getElementById('group-search').addEventListener('input', function() {
         filterGroups(query); // Filter groups based on query
     }
 });
-
 
 function showAutocomplete(groups) {
     let autocompleteList = document.getElementById('autocomplete-list');
@@ -90,6 +90,28 @@ function displayAllGroups() {
             groupContent.appendChild(groupDiv);
         }
     });
+}
+
+function displayLinkedGroups(record) {
+    // Find characters linked from the selected character
+    const linkedFromRecords = record.links.map(link => data.find(item => item.id === link.target)).filter(item => item);
+
+    // Find characters linking to the selected character
+    const linkedToRecords = data.filter(item => item.links.some(link => link.target === record.id));
+
+    // Combine and remove duplicates
+    const linkedRecords = [...new Set([...linkedFromRecords, ...linkedToRecords])];
+
+    // Find groups the linked records belong to
+    const linkedGroups = new Set();
+    linkedRecords.forEach(item => {
+        item.groups.forEach(group => linkedGroups.add(group));
+    });
+
+    console.log('Linked groups:', Array.from(linkedGroups));  // Log linked groups for debugging
+
+    // Display the linked groups
+    loadGroups(Array.from(linkedGroups));
 }
 
 // Function to filter and display groups based on search input
