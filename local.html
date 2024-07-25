@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headmaster's Scroll</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/d3@6"></script>
+    <script src="https://cdn.jsdelivr.net/gh/scyppan/scyppan@v0.0.36/scyppan.js" defer></script>
+    <script src="helper.js" defer></script>
+    <script src="data.js" defer></script>
+    <script src="detailspanel.js" defer></script>
+    <script src="linkmode.js" defer></script>
+    <script src="listview.js" defer></script>
+    <script src="treeview.js" defer></script>
+    <script src="treesearch.js" defer></script>
+    <script src="groupview.js" defer></script>
+    <script src="save.js" defer></script>
+    <script src="main.js" defer></script>
+</head>
+<body>
+    <header>
+        <div id="header">
+            <div id="button-container">
+                <div id="databtn" class="btn" style="background-color: rgb(233, 233, 233);" onclick="changewindow('datasec')">Data</div>
+                <div id="listbtn" class="btn" style="background-color: rgba(232, 213, 213,1);" onclick="changewindow('listsec')">List</div>
+                <div id="treebtn" class="btn" style="background-color: rgb(213, 232, 214);" onclick="changewindow('treesec')">Tree</div>
+                <div id="groupbtn" class="btn" style="background-color: rgb(216, 213, 232);" onclick="changewindow('groupsec')">Group</div>
+            </div>
+            <div id="add-record-container">
+                <div id="add-record-btn" class="btn" style="background-color: rgb(236, 233, 207);">Add Record</div>
+            </div>
+        </div>
+        <br><br><hr><hr><br><br>
+    </header>
+    
+    <div id="link-error-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p id="link-error-message"></p>
+        </div>
+    </div>
+
+    <main>
+        <div id="maincontainer">
+            <div id="left">
+                <div id="dataview" class="window">
+                    Upload Character Data<br>
+                    <input id="jsoninput" type="file" accept=".json"><br><br>
+                    <div id="data-info-section">Note: You must have a field named "id". That field will be displayed as the header for each record.
+                    If you do not, refactor your json to include a field called "id".
+                    </div>
+                    
+                    <div id="exportbtn" class="hidden">
+                    <br><br><hr><hr>
+                    <button id="export-data-btn" onclick="exportDataAsJSON()">Export Data as JSON</button>
+                    </div>
+
+                    <br><hr><hr><br>
+                </div>
+    
+                <div id="listview" class="window hidden">
+                
+                <br><hr><hr>
+                
+                <div id="table-container"></div>
+
+                </div>
+
+                <div id="treeview" class="window hidden">
+                    <div id="tree-search-container">
+                        <input type="text" id="tree-search" placeholder="Search records...">
+                    </div>
+                    <div id="graph-container">
+                        <svg id="graph"></svg>
+                    </div>
+                </div>
+
+                <div id="groupview" class="window hidden">
+                    <div id="group-search-container">
+                        <input type="text" id="group-search" placeholder="Search for groups..." onfocus="showAllGroups()">
+                    </div>
+                    <div id="group-content">
+                        <!-- Group details will be dynamically added here -->
+                    </div>
+                </div>
+
+
+            </div>
+    
+            <div id="right">
+                <div id="details-panel">Load data and click on a record to populate record details</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 scyppan</p>
+    </footer>
+</body>
+</html>

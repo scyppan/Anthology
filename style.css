@@ -1,0 +1,401 @@
+body {
+    background-color: #e8e3d5;
+    margin: 0;
+    font-family: 'Century Schoolbook', 'Garamond', serif;
+    font-size: 14px;
+
+}
+
+.window {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.hidden{
+    display: none !important;
+}
+
+#maincontainer {
+    display: grid;
+    grid-template-columns: 1fr 35%;
+    height: calc(100vh - 160px); /* Adjust based on the height of header and footer */
+}
+
+#dataview{
+   background-color: rgb(184, 184, 184);
+   border-radius: 17px;
+}
+
+#details-panel{
+    background-color: rgb(236, 233, 207, .3);
+}
+
+#details-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+#details-panel td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    font-weight: normal !important;
+}
+
+#details-panel button {
+    background-color: #e9cad79a;
+    border-radius: 7px;
+    margin: 3px;
+}
+
+#details-panel td:first-child {
+    font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+#details-panel input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    border: 1px solid #ccc;
+}
+
+#left {
+    padding: 10px;
+    overflow-y: auto;
+    border-right: 1px solid #ccc;
+}
+
+#right {
+    padding: 10px;
+    overflow-y: auto;
+    border-left: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+#header {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#button-container {
+    display: flex;
+    background-color: rgba(197, 197, 197, 0.75);
+}
+
+#add-record-container {
+    display: flex;
+    margin-top: 10px;
+    background-color: rgba(197, 197, 197, 0.25);
+}
+
+.btn {
+    border: 1px solid rgb(114, 109, 109);
+    border-radius: 12px;
+    padding: 7px 7px;
+    margin: 7px;
+}
+
+.btn:hover {
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.data-record {
+    font-weight: bold;
+}
+
+.data-record:hover {
+    color: rgb(85, 85, 85);
+    cursor: pointer;
+}
+
+#table-container {
+    margin-top: 7px;
+    background-color: rgba(232, 213, 213,1);
+    border-radius: 17px;
+}
+
+#treeview {
+    margin-top: 7px;
+    background-color: rgba(193, 226, 200, 0.5);
+    border-radius: 17px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#control-container {
+    padding: 10px;
+}
+
+#groupview{
+    margin-top: 7px;
+    background-color: rgba(210, 197, 223, 1);
+    border-radius: 17px;
+}
+
+#listbtn {
+    background-color: rgba(232, 213, 213,1);
+}
+
+#treebtn {
+    background-color: rgb(193, 226, 200);
+}
+
+#groupbtn {
+    background-color: rgb(213, 221, 232);
+}
+
+#add-record-btn{
+    background-color: rgb(236, 233, 207);
+}
+
+.nested-object-container {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.nested-object-title {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    margin-bottom: 10px;
+}
+
+.nested-object-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.nested-object-container td {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+
+.nested-object-container input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Add these styles to style.css */
+.side-panel {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+.control-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.control-button {
+    padding: 5px;
+    margin: 2px;
+}
+
+#linkmodecontainer {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+#graph-container {
+    flex-grow: 1;
+    width: 100%;
+    height: calc(100% - 60px); /* Adjust based on the height of control container */
+}
+
+#graph {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.fade {
+    opacity: 0.5;
+}
+
+.link-entry {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust gap as needed */
+}
+
+.link-entry input,
+.link-entry select {
+    width: auto; /* Adjust width as needed */
+}
+
+
+/* Additional styles to ensure visibility */
+#links-container input {
+    display: inline-block;
+    width: 100px;
+    margin-right: 5px;
+}
+
+#link-mode-indicator {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(191, 216, 224, .65);
+    padding: 10px;
+    border: 1px solid black;
+    z-index: 1000;
+}
+
+body.link-mode-active {
+    cursor: pointer;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .link {
+    fill: none;
+    stroke: #a0a0a0;
+}
+
+.link.solid {
+    stroke-width: 1.5px;
+}
+
+.link.thick {
+    stroke-width: 3px;
+}
+
+.link.dotted {
+    stroke-width: 1.5px;
+    stroke-dasharray: 1, 4;
+}
+
+.link.dashed {
+    stroke-width: 1.5px;
+    stroke-dasharray: 4, 4;
+}
+
+.labels text,
+.nodes circle {
+    cursor: pointer;
+}
+
+#notes-container{
+    margin-bottom:17px;
+    border-bottom: 1px solid black;
+}
+
+#group-search-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: #51475c; /* Light purple background */
+    border: 1px solid #b29dd9; /* Darker purple border */
+    border-radius: 12px;
+    padding: 10px;
+}
+
+#group-search {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #b29dd9; /* Darker purple border */
+    border-radius: 4px;
+    background-color: #f3e8ff; /* Light purple background */
+    color: #4b0082; /* Dark purple text color */
+}
+
+.group-item {
+    margin-left: 3px;
+    margin-bottom: 12px;
+    background-color: #f3e8ff; /* Light purple background */
+    border: 1px solid #b29dd9; /* Darker purple border */
+    border-radius: 23px;
+    padding-left: 7px;
+}
+
+.group-item h4 {
+    margin-top:7px;
+    margin-bottom:3px;
+    color: #4b0082; /* Dark purple text color */
+}
+
+.group-members {
+    padding-left: 15px; /* Indent group members */
+}
+
+.group-members div {
+    padding: 5px 0; /* Add padding to individual group member items */
+    color: #4b0082; /* Dark purple text color */
+}
+
+#group-content{
+    margin-top: 12px;
+}
+
+#tree-search-container {
+    padding: 10px;
+    background-color: #465548;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 20px;
+}
+
+#tree-search {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex-grow: 1;
+}
