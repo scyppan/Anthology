@@ -22,6 +22,17 @@ document.getElementById('toggle-linked').addEventListener('change', function() {
     } else {
         resetViews();
     }
+
+    const groupView = document.getElementById('groupview');
+
+    if (groupView && !groupView.classList.contains('hidden')) {
+        if (this.checked && currentRecord) {
+            updateGroupView(currentRecord);
+        } else {
+            displayAllGroups(); // Function to display all groups when checkbox is unchecked
+        }
+    }
+
 });
 
 function showLinkedEntities(record) {
@@ -61,4 +72,23 @@ function showLinkedGroups(linkedRecords) {
         }
     });
     loadGroups(Array.from(linkedGroups)); // Display the linked groups
+}
+
+function getLinkedRecords(record) {
+
+    console.log(record);
+
+    const linkedFromRecords = record.links.map(link => data.find(item => item.id === link.target)).filter(item => item);
+    const linkedToRecords = data.filter(item => item.links.some(link => link.target === record.id));
+    return [...new Set([record, ...linkedFromRecords, ...linkedToRecords])];
+}
+
+function getLinkedGroups(linkedRecords) {
+    const linkedGroups = new Set();
+    linkedRecords.forEach(item => {
+        if (item.groups) {
+            item.groups.forEach(group => linkedGroups.add(group));
+        }
+    });
+    return Array.from(linkedGroups);
 }

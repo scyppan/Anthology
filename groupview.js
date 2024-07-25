@@ -67,10 +67,9 @@ function displayAllGroups() {
     const groupContent = document.getElementById('group-content');
     groupContent.innerHTML = ''; // Clear existing content
 
-    const allGroups = [...new Set(data.flatMap(record => record.groups || []))]; // Get all unique groups, handle undefined groups
-
+    const allGroups = new Set(data.flatMap(record => record.groups || []));
     allGroups.forEach(groupName => {
-        if (groupName && groupName.trim() !== '') { // Check for existence and non-empty strings
+        if (groupName && groupName.trim() !== '') {
             let groupDiv = document.createElement('div');
             groupDiv.id = `group-${groupName}`;
             groupDiv.className = 'group-item';
@@ -79,7 +78,7 @@ function displayAllGroups() {
             let groupMembers = data.filter(record => record.groups && record.groups.includes(groupName));
             groupMembers.forEach(member => {
                 let memberItem = document.createElement('div');
-                memberItem.className = 'data-record'; // Add the data-record class
+                memberItem.className = 'data-record';
                 memberItem.textContent = member.id;
                 memberItem.addEventListener('click', function() {
                     populateDetailsPanel(member);
@@ -133,6 +132,46 @@ function filterGroups(query) {
             groupMembers.forEach(member => {
                 let memberItem = document.createElement('div');
                 memberItem.className = 'data-record'; // Add the data-record class
+                memberItem.textContent = member.id;
+                memberItem.addEventListener('click', function() {
+                    populateDetailsPanel(member);
+                });
+                groupDiv.querySelector('.group-members').appendChild(memberItem);
+            });
+
+            groupContent.appendChild(groupDiv);
+        }
+    });
+}
+
+function getLinkedGroups(linkedRecords) {
+    const linkedGroups = new Set();
+    linkedRecords.forEach(item => {
+        if (item.groups) {
+            item.groups.forEach(group => linkedGroups.add(group));
+        }
+    });
+    return Array.from(linkedGroups);
+}
+
+function updateGroupView(record) {
+    const linkedRecords = getLinkedRecords(record);
+    const linkedGroups = getLinkedGroups(linkedRecords);
+
+    const groupContent = document.getElementById('group-content');
+    groupContent.innerHTML = ''; // Clear existing content
+
+    linkedGroups.forEach(groupName => {
+        if (groupName && groupName.trim() !== '') {
+            let groupDiv = document.createElement('div');
+            groupDiv.id = `group-${groupName}`;
+            groupDiv.className = 'group-item';
+            groupDiv.innerHTML = `<h4>${groupName}</h4><div class="group-members"></div>`;
+
+            let groupMembers = linkedRecords.filter(record => record.groups && record.groups.includes(groupName));
+            groupMembers.forEach(member => {
+                let memberItem = document.createElement('div');
+                memberItem.className = 'data-record';
                 memberItem.textContent = member.id;
                 memberItem.addEventListener('click', function() {
                     populateDetailsPanel(member);

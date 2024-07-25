@@ -31,7 +31,17 @@ function changewindow(which) {
         case "groupsec":
             if (groupsec && groupsec.classList.contains('hidden')) {
                 groupsec.classList.remove('hidden');
-                displayAllGroups();
+
+                const inputElement = document.getElementById('nodeName');
+                const nodeId = inputElement.getAttribute('data-node-id');
+                let record = data.find(x=> x.id==nodeId);
+
+                if(toggleLinkedCheckbox && record){
+                    
+                    updateGroupView(record);
+                }else{
+                    displayAllGroups();
+                }
             }
             break;
     }
