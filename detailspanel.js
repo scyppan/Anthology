@@ -132,7 +132,6 @@ function removeLink(index, button) {
     loadgraph(data);
 }
 
-
 function populateDetailsPanel(record) {
     // Ensure every record has fx and fy keys
     record.fx = record.fx || '';
