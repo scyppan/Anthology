@@ -164,19 +164,3 @@ function removeGroup(index, record) {
     populateDetailsPanel(record); // Refresh the details panel to show the updated groups
 }
 
-function exportDataAsJSON() {
-    const dataStr = JSON.stringify(data, null, 2); // Convert data to JSON string with pretty print
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "graph_data.json"; // Default filename for the exported data
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url); // Clean up the URL object
-}
-
-// Ensure the export function is available globally
-window.exportDataAsJSON = exportDataAsJSON;
