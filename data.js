@@ -21,7 +21,7 @@ document.getElementById('jsoninput').addEventListener('change', async function(e
         document.getElementById('dataview').classList.add('hidden');
         document.getElementById('listview').classList.remove('hidden');
         document.getElementById('data-info-section').innerText = "Your data has been loaded, if you load the data again, you will lose any changes you've made to these data";
-        document.getElementById('exportbtn').classList.remove('hidden');
+        
         createtablefromdata();
     } catch (error) {
         console.error(error); // Handle any errors
@@ -135,6 +135,7 @@ function activateListSearch() {
     const listSearchInput = document.getElementById('list-search');
     if (listSearchInput) {
         listSearchInput.focus();
+        listSearchInput.select();
     }
 }
 
