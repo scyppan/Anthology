@@ -1,3 +1,5 @@
+let selectedRecordId;
+
 document.getElementById('add-record-btn').addEventListener('click', addNewRecord);
 
 function addNewKeyValuePair(record, tbody) {
@@ -173,6 +175,8 @@ function addGroup(record, groupTbody) {
 }
 
 function populateDetailsPanel(record) {
+
+    selectedRecord=record;
     // Ensure every record has fx and fy keys
     record.fx = record.fx || '';
     record.fy = record.fy || '';

@@ -1,4 +1,5 @@
 • Need a way to set the trees to grab different links in different ways (as it show only direct links / show indirect links)
 • Esc to exit link mode.
 • Can't link to self
-• Unhide the export as json if there is any data
+• Duplicate prevention not working
+• changing id doesn't change list view or linked item

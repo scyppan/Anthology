@@ -33,11 +33,16 @@ function changewindow(which) {
                 groupsec.classList.remove('hidden');
 
                 const inputElement = document.getElementById('nodeName');
-                const nodeId = inputElement.getAttribute('data-node-id');
-                let record = data.find(x=> x.id==nodeId);
 
+                let nodeid;
+                try{
+                    nodeid= inputElement.getAttribute('data-node-id');
+                } catch{
+
+                }
+                
+                let record = data.find(x=> x.id==nodeid);
                 if(toggleLinkedCheckbox && record){
-                    
                     updateGroupView(record);
                 }else{
                     displayAllGroups();

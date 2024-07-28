@@ -1,10 +1,14 @@
 let data = {};
 
+// Assuming this is in data.js or where you handle loading new data
 document.getElementById('jsoninput').addEventListener('change', async function(event) {
     const file = event.target.files[0]; // Get the selected file
     try {
         data = await readjson(file); // Read and parse the JSON file
         
+        // Ensure each record has a unique ID
+        addUniqueIdSuffixes(data);
+
         // Check for the 'id' field in the first record
         if (!data[0].hasOwnProperty('id')) {
             throw new Error("The JSON data must contain an 'id' field.");
@@ -21,7 +25,7 @@ document.getElementById('jsoninput').addEventListener('change', async function(e
         document.getElementById('dataview').classList.add('hidden');
         document.getElementById('listview').classList.remove('hidden');
         document.getElementById('data-info-section').innerText = "Your data has been loaded, if you load the data again, you will lose any changes you've made to these data";
-        
+        document.getElementById('exportbtn').classList.remove('hidden');
         createtablefromdata();
     } catch (error) {
         console.error(error); // Handle any errors
@@ -71,6 +75,8 @@ function updateRecordKey(record, oldKey, newKey) {
         }
         updateData(record);
     }
+
+    
 }
 
 function updateRecordValue(record, key, newValue) {
