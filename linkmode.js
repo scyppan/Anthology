@@ -11,7 +11,7 @@ function startLinkMode(linkIndex) {
     document.body.style.cursor = 'pointer'; // Change cursor to pointer
     const linkModeIndicator = document.getElementById('link-mode-indicator') || document.createElement('div');
     linkModeIndicator.id = 'link-mode-indicator';
-    linkModeIndicator.textContent = 'Link Mode Active: Click a record to link';
+    linkModeIndicator.textContent = 'Link Mode Active: Click a record to link. Press Esc to exit';
     linkModeIndicator.style.position = 'fixed';
     linkModeIndicator.style.top = '10px';
     linkModeIndicator.style.left = '50%';
@@ -53,6 +53,13 @@ document.addEventListener('click', function(event) {
         const targetRecordId = target.textContent ? target.textContent.trim() : target.__data__.id;
         console.log('Target record ID:', targetRecordId); // Log the target record ID
 
+        // Check if the target is the same as the source
+        if (linkSource.recordId === targetRecordId) {
+            showModal('Cannot link to self (i.e., you are trying to link this record to itself). This is not allowed. Link mode will close now.');
+            exitLinkMode();
+            return;
+        }
+
         const sourceRecord = data.find(rec => rec.id === linkSource.recordId);
         if (sourceRecord) {
             if (isUniqueLink(targetRecordId, sourceRecord.links)) {
@@ -72,19 +79,30 @@ document.addEventListener('click', function(event) {
             } else {
                 showModal('The selected ID is already linked. Please choose a different ID. Link mode will close now.');
             }
-            linkMode = false;
-            linkSource = null;
-            document.body.style.cursor = 'default';
-            const linkModeIndicator = document.getElementById('link-mode-indicator');
-            if (linkModeIndicator) {
-                document.body.removeChild(linkModeIndicator);
-            }
-            populateDetailsPanel(sourceRecord);
+            exitLinkMode();
         } else {
             console.error('Source record not found');
         }
     }
 });
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        if (linkMode) {
+            exitLinkMode();
+        }
+    }
+});
+
+function exitLinkMode() {
+    linkMode = false;
+    linkSource = null;
+    document.body.style.cursor = 'default';
+    const linkModeIndicator = document.getElementById('link-mode-indicator');
+    if (linkModeIndicator) {
+        document.body.removeChild(linkModeIndicator);
+    }
+}
 
 function isUniqueLink(targetId, links) {
     return !links.some(link => link.target === targetId);
