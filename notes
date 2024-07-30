@@ -1,5 +1,3 @@
 • Need a way to set the trees to grab different links in different ways (as it show only direct links / show indirect links)
 • Esc to exit link mode.
 • Can't link to self
-• Duplicate prevention not working
-• changing id doesn't change list view or linked item

@@ -7,7 +7,6 @@ document.getElementById('jsoninput').addEventListener('change', async function(e
         data = await readjson(file); // Read and parse the JSON file
         
         // Ensure each record has a unique ID
-        addUniqueIdSuffixes(data);
 
         // Check for the 'id' field in the first record
         if (!data[0].hasOwnProperty('id')) {
@@ -84,7 +83,7 @@ function updateRecordValue(record, key, newValue) {
         delete record[key];
         populateDetailsPanel(record); // Refresh the details panel to reflect changes
     } else {
-        if (key === 'id') {
+        if (key === 'id') {console.log(newValue);
             newValue = generateUniqueId(newValue); // Ensure the new id is unique
 
             // Update the record's ID in the data array

@@ -207,12 +207,18 @@ function populateDetailsPanel(record) {
         valueInput.type = 'text';
         valueInput.value = record[key];
         valueInput.addEventListener('change', function() {
-            record[key] = valueInput.value;
+            const newValue = valueInput.value.trim();
             if (key === 'id') {
                 const oldId = record.id;
-                record.id = generateUniqueId(valueInput.value);
+                // Check if the new ID conflicts with existing records
+                if (data.some(record => record.id === newValue && record.id !== oldId)) {
+                    record.id = generateUniqueId(newValue); // Generate a unique ID if there's a conflict
+                } else {
+                    record.id = newValue; // Use the new value if there's no conflict
+                }
                 updateData(record, oldId); // Update data with oldId for reference
             } else {
+                record[key] = newValue;
                 updateData(record);
             }
             populateDetailsPanel(record); // Refresh the details panel to show the updated values
