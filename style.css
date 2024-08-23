@@ -17,9 +17,38 @@ body {
 }
 
 #maincontainer {
-    display: grid;
-    grid-template-columns: 1fr 35%;
+    display: flex;
     height: calc(100vh - 160px); /* Adjust based on the height of header and footer */
+}
+
+#left {
+    flex: 1; /* Allow the left panel to take up remaining space */
+    padding: 7px;
+    overflow-y: auto;
+    border-right: 1px solid #ccc;
+}
+
+#right {
+    max-width: 45%;
+    flex: 1; /* Allow the right panel to take up remaining space */
+    margin-right: 3px;
+    padding: 7px;
+    overflow-y: auto;
+    border-left: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+#details-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+#details-panel input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    border: 1px solid #ccc;
 }
 
 #dataview{
@@ -405,64 +434,10 @@ body.link-mode-active {
     color: #411818;
 }
 
-/* Flexbox for group and role td elements to align inputs horizontally */
-.group-td, .role-td, .priority-td {
-    display: flex;
-    align-items: center;
-}
-
-.group-td, .role-td {
-    flex-grow: 1; /* Allow cells to grow and fill space */
-    margin-right: 3px; /* Minimal space between cells */
-}
-
-/* Inputs should fill their respective cells */
-.group-td input, .role-td input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Priority td and input adjustments */
-.priority-td {
-    width: 50px;
-    white-space: nowrap;
-    padding: 0 3px; /* Minimal padding */
-}
-
-.priority-td input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Button alignment */
-.delete-btn-td {
-    width: auto;
-    padding-left: 3px; /* Minimal padding */
-}
-
-.delete-btn-td button {
-    display: block;
-    margin: auto 0;
-}
-
-#left {
-    padding: 7px;
-    overflow-y: auto;
-    border-right: 1px solid #ccc;
-}
-
-#right {
-    margin-right:3px;
-    padding: 7px;
-    overflow-y: auto;
-    border-left: 1px solid #ccc;
-    background-color: #f9f9f9;
-}
-
 .flex-row {
-    display: flex;
+    display:flex;
     flex-direction: row;
-    width: 100%;
+    width: 100% !important;
     align-items: center;
 }
 
@@ -470,4 +445,25 @@ body.link-mode-active {
 ::-webkit-input-placeholder, ::placeholder {
     color: #7d8553;
     opacity: .55;
+}
+
+.group-td, .role-td {
+    flex-grow:1;
+    min-width: 120px !important;
+    margin-right: 3px; /* Minimal space between cells */
+}
+
+.priority-td{
+    max-width: 120px;
+}
+
+.priority-td input {
+    width: 100%;
+    box-sizing: border-box;  
+}
+
+.delete-btn-td {
+    width: auto;
+    flex-shrink: 0; /* Don’t allow the button to shrink */
+    padding-left: 3px; /* Minimal padding */
 }

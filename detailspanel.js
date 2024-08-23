@@ -389,6 +389,8 @@ function populateDetailsPanel(record) {
     
         // Group td and input
         const groupCell = document.createElement('td');
+        groupCell.classList.add('group-td');
+        groupCell.title = 'Group';
         const groupInput = document.createElement('input');
         groupInput.type = 'text';
         groupInput.value = groupEntry.group || '';
@@ -402,6 +404,8 @@ function populateDetailsPanel(record) {
     
         // Role td and input
         const roleCell = document.createElement('td');
+        roleCell.classList.add('role-td');
+        roleCell.title = 'Role';
         const roleInput = document.createElement('input');
         roleInput.type = 'text';
         roleInput.value = groupEntry.role || '';
@@ -419,7 +423,8 @@ function populateDetailsPanel(record) {
         const priorityInput = document.createElement('input');
         priorityInput.type = 'number';
         priorityInput.value = groupEntry.priority || '';
-        priorityInput.placeholder = 'Prior';
+        priorityInput.placeholder = 'Priority';
+        priorityInput.title = 'Priority';
         priorityInput.addEventListener('change', function () {
             const priorityValue = parseInt(priorityInput.value.trim(), 10);
             record.groups[index].priority = isNaN(priorityValue) ? '' : priorityValue;
