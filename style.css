@@ -455,6 +455,7 @@ body.link-mode-active {
 
 .priority-td{
     max-width: 120px;
+    min-width:50px;
 }
 
 .priority-td input {

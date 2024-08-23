@@ -172,8 +172,8 @@ function addGroup(record, groupTbody) {
             };
             record.groups.push(newGroup);
             updateData(record);
-            populateDetailsPanel(record); // Refresh the details panel to show the new group
-            activateListSearch(); // Activate search bar in list view
+            //populateDetailsPanel(record); // Refresh the details panel to show the new group
+            //activateListSearch(); // Activate search bar in list view
         } else {
             groupRow.remove();
         }

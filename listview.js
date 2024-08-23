@@ -128,4 +128,10 @@ document.getElementById('list-search').addEventListener('input', function() {
     searchList(query);
 });
 
+document.addEventListener('keydown', function(event) {
+    if (event.altKey && event.key === '0') {
+        event.preventDefault(); // Prevent the default behavior if any
+        activateListSearch(); // Call the function to activate the search bar
+    }
+});
 
