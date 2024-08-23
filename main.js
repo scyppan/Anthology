@@ -52,3 +52,8 @@ function changewindow(which) {
     }
 }
 
+function openDonateLink() {
+    const amount = 25; // Set your default amount here
+    const paypalLink = `https://www.paypal.com/donate/?business=DQVHYD3L44F94&no_recurring=0&item_name=I+make+these+tools+to+support+artists%2C+not+to+make+money.+But%2C+donations+help+me+afford+to+spend+time+supporting+these+tools.+&currency_code=USD&amount=25`;
+    window.open(paypalLink, '_blank'); // Opens the link in a new tab
+}
