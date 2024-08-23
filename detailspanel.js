@@ -136,15 +136,41 @@ function removeLink(index, button) {
     loadgraph(data);
 }
 
+function displayLinkedCharacters(record) {
+    const listSearchInput = document.getElementById('list-search');
+    const toggleLinkedCheckbox = document.getElementById('toggle-linked');
+
+    if (!listSearchInput || !toggleLinkedCheckbox) {
+        console.error('Error: list-search input or toggle-linked checkbox not found.');
+        return;
+    }
+
+    if (toggleLinkedCheckbox.checked) { // Proceed only if the checkbox is checked
+        const linkedFromRecords = record.links.map(link => data.find(item => item.id === link.target)).filter(item => item);
+        const linkedToRecords = data.filter(item => item.links.some(link => link.target === record.id));
+        const linkedRecords = [...new Set([...linkedFromRecords, ...linkedToRecords])];
+
+        createTableFromSearchResults(linkedRecords); // Function to display search results
+    }
+}
+
 function addGroup(record, groupTbody) {
     const groupRow = document.createElement('tr');
+
+    // Group input
     const groupCell = document.createElement('td');
     const groupInput = document.createElement('input');
     groupInput.type = 'text';
-    groupInput.placeholder = 'New group';
+    groupInput.placeholder = 'Group';
+    groupInput.value = '';
     groupInput.addEventListener('change', function() {
         if (groupInput.value.trim() !== '') {
-            record.groups.push(groupInput.value);
+            const newGroup = {
+                group: groupInput.value.trim(),
+                role: '',
+                priority: ''
+            };
+            record.groups.push(newGroup);
             updateData(record);
             populateDetailsPanel(record); // Refresh the details panel to show the new group
             activateListSearch(); // Activate search bar in list view
@@ -155,16 +181,49 @@ function addGroup(record, groupTbody) {
     groupCell.appendChild(groupInput);
     groupRow.appendChild(groupCell);
 
+    // Role input
+    const roleCell = document.createElement('td');
+    const roleInput = document.createElement('input');
+    roleInput.type = 'text';
+    roleInput.placeholder = 'Role';
+    roleInput.value = '';
+    roleInput.addEventListener('change', function() {
+        const groupIndex = record.groups.findIndex(g => g.group === groupInput.value);
+        if (groupIndex !== -1) {
+            record.groups[groupIndex].role = roleInput.value.trim();
+            updateData(record);
+        }
+    });
+    roleCell.appendChild(roleInput);
+    groupRow.appendChild(roleCell);
+
+    // Priority input
+    const priorityCell = document.createElement('td');
+    const priorityInput = document.createElement('input');
+    priorityInput.type = 'number';
+    priorityInput.placeholder = 'Priority';
+    priorityInput.value = '';
+    priorityInput.addEventListener('change', function() {
+        const groupIndex = record.groups.findIndex(g => g.group === groupInput.value);
+        if (groupIndex !== -1) {
+            const priorityValue = parseInt(priorityInput.value.trim(), 10);
+            record.groups[groupIndex].priority = isNaN(priorityValue) ? '' : priorityValue;
+            updateData(record);
+        }
+    });
+    priorityCell.appendChild(priorityInput);
+    groupRow.appendChild(priorityCell);
+
+    // Delete button
     const deleteCell = document.createElement('td');
     const deleteButton = document.createElement('button');
     deleteButton.textContent = '⊖';
     deleteButton.addEventListener('click', function() {
-        groupRow.remove();
-        const index = record.groups.indexOf(groupInput.value);
-        if (index !== -1) {
-            record.groups.splice(index, 1);
+        const groupIndex = record.groups.findIndex(g => g.group === groupInput.value);
+        if (groupIndex !== -1) {
+            record.groups.splice(groupIndex, 1);
             updateData(record);
-            activateListSearch(); // Activate search bar in list view
+            groupRow.remove();
         }
     });
     deleteCell.appendChild(deleteButton);
@@ -175,17 +234,17 @@ function addGroup(record, groupTbody) {
 }
 
 function populateDetailsPanel(record) {
+    selectedRecord = record;
 
-    selectedRecord=record;
     // Ensure every record has fx and fy keys
     record.fx = record.fx || '';
     record.fy = record.fy || '';
 
-    if (record.fx < 75) {
-        record.fx = randbetween(75, 150);
+    if (record.fx < 10) {
+        record.fx = randbetween(10, 150);
     }
-    if (record.fy < 75) {
-        record.fy = randbetween(75, 150);
+    if (record.fy < 10) {
+        record.fy = randbetween(10, 150);
     }
 
     const detailsPanel = document.getElementById('details-panel');
@@ -206,7 +265,7 @@ function populateDetailsPanel(record) {
         const valueInput = document.createElement('input');
         valueInput.type = 'text';
         valueInput.value = record[key];
-        valueInput.addEventListener('change', function() {
+        valueInput.addEventListener('change', function () {
             const newValue = valueInput.value.trim();
             if (key === 'id') {
                 const oldId = record.id;
@@ -254,15 +313,13 @@ function populateDetailsPanel(record) {
 
     // Append the global toggleLinkedLabel element to the container
     toggleLinkedContainer.appendChild(toggleLinkedLabel);
-    // Append the container to the details panel
     detailsPanel.appendChild(toggleLinkedContainer);
     toggleLinkedLabel.classList.remove('hidden');
     toggleLinkedCheckbox.classList.remove('hidden');
 
     // Add event listener for the checkbox
-    
     if (toggleLinkedCheckbox) {
-        toggleLinkedCheckbox.addEventListener('change', function() {
+        toggleLinkedCheckbox.addEventListener('change', function () {
             if (this.checked) {
                 displayLinkedCharacters(record);
             } else {
@@ -275,7 +332,7 @@ function populateDetailsPanel(record) {
     const addButton = document.createElement('button');
     addButton.textContent = 'Add new key-value pair';
     addButton.classList.add("btn");
-    addButton.addEventListener('click', function() {
+    addButton.addEventListener('click', function () {
         addNewKeyValuePair(record, tbody);
     });
     detailsPanel.appendChild(addButton);
@@ -301,7 +358,7 @@ function populateDetailsPanel(record) {
 
         // Attach event listeners to existing links
         const typeSelect = linkDiv.querySelector('.link-type');
-        typeSelect.addEventListener('change', function() {
+        typeSelect.addEventListener('change', function () {
             record.links[index].type = typeSelect.value;
             updateData(record); // Update data to reflect changes
         });
@@ -311,13 +368,13 @@ function populateDetailsPanel(record) {
     const addLinkButton = document.createElement('button');
     addLinkButton.textContent = 'Add Link';
     addLinkButton.classList.add("btn");
-    addLinkButton.addEventListener('click', function() {
+    addLinkButton.addEventListener('click', function () {
         console.log('Add Link button clicked'); // Log click event
         addLink(record);
     });
     detailsPanel.appendChild(addLinkButton);
 
-    // Add a section for groups
+    // Add a section for groups with group, role, and priority inputs
     const groupsContainer = document.createElement('div');
     groupsContainer.id = 'groups-container';
     groupsContainer.innerHTML = '<h3>Groups</h3>';
@@ -326,34 +383,66 @@ function populateDetailsPanel(record) {
     const groupTable = document.createElement('table');
     const groupTbody = document.createElement('tbody');
 
-    record.groups.forEach((group, index) => {
+    record.groups.forEach((groupEntry, index) => {
         const groupRow = document.createElement('tr');
+        groupRow.classList.add('flex-row'); // Apply flexbox to the row
+    
+        // Group td and input
         const groupCell = document.createElement('td');
         const groupInput = document.createElement('input');
         groupInput.type = 'text';
-        groupInput.value = group;
-        groupInput.addEventListener('change', function() {
-            if (groupInput.value.trim() === '') {
-                removeGroup(index, record);
-            } else {
-                record.groups[index] = groupInput.value;
-                updateData(record); // Update data to reflect changes
-            }
+        groupInput.value = groupEntry.group || '';
+        groupInput.placeholder = 'Group';
+        groupInput.addEventListener('change', function () {
+            record.groups[index].group = groupInput.value.trim();
+            updateData(record); // Update data to reflect changes
         });
         groupCell.appendChild(groupInput);
         groupRow.appendChild(groupCell);
-
+    
+        // Role td and input
+        const roleCell = document.createElement('td');
+        const roleInput = document.createElement('input');
+        roleInput.type = 'text';
+        roleInput.value = groupEntry.role || '';
+        roleInput.placeholder = 'Role';
+        roleInput.addEventListener('change', function () {
+            record.groups[index].role = roleInput.value.trim();
+            updateData(record); // Update data to reflect changes
+        });
+        roleCell.appendChild(roleInput);
+        groupRow.appendChild(roleCell);
+    
+        // Priority td and input
+        const priorityCell = document.createElement('td');
+        priorityCell.classList.add('priority-td'); // Specific class for priority width
+        const priorityInput = document.createElement('input');
+        priorityInput.type = 'number';
+        priorityInput.value = groupEntry.priority || '';
+        priorityInput.placeholder = 'Prior';
+        priorityInput.addEventListener('change', function () {
+            const priorityValue = parseInt(priorityInput.value.trim(), 10);
+            record.groups[index].priority = isNaN(priorityValue) ? '' : priorityValue;
+            updateData(record); // Update data to reflect changes
+        });
+        priorityCell.appendChild(priorityInput);
+        groupRow.appendChild(priorityCell);
+    
+        // Delete button
         const deleteCell = document.createElement('td');
+        deleteCell.classList.add('delete-btn-td');
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '⊖';
-        deleteButton.addEventListener('click', function() {
+        deleteButton.addEventListener('click', function () {
             removeGroup(index, record);
         });
         deleteCell.appendChild(deleteButton);
         groupRow.appendChild(deleteCell);
-
+    
         groupTbody.appendChild(groupRow);
     });
+    
+    
 
     groupTable.appendChild(groupTbody);
     groupsContainer.appendChild(groupTable);
@@ -361,7 +450,7 @@ function populateDetailsPanel(record) {
     const addGroupButton = document.createElement('button');
     addGroupButton.textContent = 'Add Group';
     addGroupButton.classList.add("btn");
-    addGroupButton.addEventListener('click', function() {
+    addGroupButton.addEventListener('click', function () {
         addGroup(record, groupTbody);
     });
     groupsContainer.appendChild(addGroupButton);
@@ -378,7 +467,7 @@ function populateDetailsPanel(record) {
     notesTextarea.style.width = '100%';
     notesTextarea.style.height = '100px';
     notesTextarea.value = record.notes || ''; // Set the initial value of the text area to the record's notes
-    notesTextarea.addEventListener('input', function() {
+    notesTextarea.addEventListener('input', function () {
         record.notes = notesTextarea.value; // Update the record's notes property on input
         updateData(record); // Update the data to reflect changes
     });
@@ -390,26 +479,8 @@ function populateDetailsPanel(record) {
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete this record';
     deleteButton.classList.add("btn");
-    deleteButton.addEventListener('click', function() {
+    deleteButton.addEventListener('click', function () {
         deleteRecord(record); // Function to delete the record
     });
     detailsPanel.appendChild(deleteButton);
-}
-
-function displayLinkedCharacters(record) {
-    const listSearchInput = document.getElementById('list-search');
-    const toggleLinkedCheckbox = document.getElementById('toggle-linked');
-
-    if (!listSearchInput || !toggleLinkedCheckbox) {
-        console.error('Error: list-search input or toggle-linked checkbox not found.');
-        return;
-    }
-
-    if (toggleLinkedCheckbox.checked) { // Proceed only if the checkbox is checked
-        const linkedFromRecords = record.links.map(link => data.find(item => item.id === link.target)).filter(item => item);
-        const linkedToRecords = data.filter(item => item.links.some(link => link.target === record.id));
-        const linkedRecords = [...new Set([...linkedFromRecords, ...linkedToRecords])];
-
-        createTableFromSearchResults(linkedRecords); // Function to display search results
-    }
 }

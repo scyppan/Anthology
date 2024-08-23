@@ -11,8 +11,11 @@ document.getElementById('group-search').addEventListener('input', function() {
 function showAutocomplete(groups) {
     let autocompleteList = document.getElementById('autocomplete-list');
     autocompleteList.innerHTML = '';
-    groups = [...new Set(groups)]; // Remove duplicates
-    groups.forEach(group => {
+
+    // Flatten and map groups to just the group names
+    const groupNames = [...new Set(groups.map(groupObj => groupObj.group))]; 
+
+    groupNames.forEach(group => {
         if (group && group.trim() !== '') { // Check for existence and non-empty strings
             let item = document.createElement('div');
             item.textContent = group;
@@ -44,11 +47,24 @@ function addGroupToView(groupName) {
     groupDiv.className = 'group-item';
     groupDiv.innerHTML = `<h2>${groupName}</h2><div class="group-members"></div>`;
     
-    let groupMembers = data.filter(record => record.groups && Array.isArray(record.groups) && record.groups.includes(groupName));
+    let groupMembers = data.filter(record => record.groups && record.groups.some(groupObj => groupObj.group === groupName));
+    
+    // Sort the group members by priority (empty priorities go to the bottom)
+    groupMembers.sort((a, b) => {
+        const aPriority = a.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
+        const bPriority = b.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
+        return aPriority - bPriority;
+    });
+    
     groupMembers.forEach(member => {
+        let groupObj = member.groups.find(groupObj => groupObj.group === groupName);
         let memberItem = document.createElement('div');
         memberItem.className = 'data-record'; // Add the data-record class
-        memberItem.textContent = member.id;
+        
+        // Conditionally include the role if it's not empty
+        const roleText = groupObj.role ? ` (${groupObj.role})` : '';
+        memberItem.textContent = `${member.id}${roleText}`; // Display member name with role (if available)
+        
         memberItem.addEventListener('click', function() {
             populateDetailsPanel(member);
         });
@@ -67,7 +83,7 @@ function displayAllGroups() {
     const groupContent = document.getElementById('group-content');
     groupContent.innerHTML = ''; // Clear existing content
 
-    const allGroups = new Set(data.flatMap(record => record.groups || []));
+    const allGroups = new Set(data.flatMap(record => record.groups || []).map(groupObj => groupObj.group));
     allGroups.forEach(groupName => {
         if (groupName && groupName.trim() !== '') {
             let groupDiv = document.createElement('div');
@@ -75,11 +91,24 @@ function displayAllGroups() {
             groupDiv.className = 'group-item';
             groupDiv.innerHTML = `<h4>${groupName}</h4><div class="group-members"></div>`;
 
-            let groupMembers = data.filter(record => record.groups && record.groups.includes(groupName));
+            let groupMembers = data.filter(record => record.groups && record.groups.some(groupObj => groupObj.group === groupName));
+
+            // Sort the group members by priority (empty priorities go to the bottom)
+            groupMembers.sort((a, b) => {
+                const aPriority = a.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
+                const bPriority = b.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
+                return aPriority - bPriority;
+            });
+
             groupMembers.forEach(member => {
+                let groupObj = member.groups.find(groupObj => groupObj.group === groupName);
                 let memberItem = document.createElement('div');
                 memberItem.className = 'data-record';
-                memberItem.textContent = member.id;
+                
+                // Conditionally include the role if it's not empty
+                const roleText = groupObj.role ? ` (${groupObj.role})` : '';
+                memberItem.textContent = `${member.id}${roleText}`; // Display member name with role (if available)
+                
                 memberItem.addEventListener('click', function() {
                     populateDetailsPanel(member);
                 });
@@ -113,13 +142,14 @@ function displayLinkedGroups(record) {
     loadGroups(Array.from(linkedGroups));
 }
 
-// Function to filter and display groups based on search input
 function filterGroups(query) {
     const groupContent = document.getElementById('group-content');
     groupContent.innerHTML = ''; // Clear existing content
 
-    const filteredGroups = [...new Set(data.flatMap(record => record.groups || []))]
-        .filter(groupName => groupName.toLowerCase().includes(query.toLowerCase())); // Filter groups by query
+    // Flatten groups into an array of group names
+    const filteredGroups = [...new Set(data.flatMap(record => record.groups || [])
+        .map(groupObj => groupObj.group)
+        .filter(groupName => groupName.toLowerCase().includes(query.toLowerCase())))]; // Filter groups by query
 
     filteredGroups.forEach(groupName => {
         if (groupName && groupName.trim() !== '') { // Check for existence and non-empty strings
@@ -128,7 +158,7 @@ function filterGroups(query) {
             groupDiv.className = 'group-item';
             groupDiv.innerHTML = `<h4>${groupName}</h4><div class="group-members"></div>`;
 
-            let groupMembers = data.filter(record => record.groups && record.groups.includes(groupName));
+            let groupMembers = data.filter(record => record.groups && record.groups.some(groupObj => groupObj.group === groupName));
             groupMembers.forEach(member => {
                 let memberItem = document.createElement('div');
                 memberItem.className = 'data-record'; // Add the data-record class

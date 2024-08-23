@@ -24,7 +24,6 @@ window.addEventListener('load', function() {
     loadDataFromLocalStorage();
 });
 
-
 function exportDataAsJSON() {
     const dataStr = JSON.stringify(data, null, 2); // Convert data to JSON string with pretty print
     const blob = new Blob([dataStr], { type: "application/json" });

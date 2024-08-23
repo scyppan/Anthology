@@ -31,15 +31,8 @@ body {
     background-color: rgb(236, 233, 207, .3);
 }
 
-#details-panel table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 12px;
-}
-
 #details-panel td {
-    padding: 8px;
-    border: 1px solid #ccc;
+    padding: 3px;
     font-weight: normal !important;
 }
 
@@ -59,19 +52,6 @@ body {
     box-sizing: border-box;
     padding: 4px;
     border: 1px solid #ccc;
-}
-
-#left {
-    padding: 10px;
-    overflow-y: auto;
-    border-right: 1px solid #ccc;
-}
-
-#right {
-    padding: 10px;
-    overflow-y: auto;
-    border-left: 1px solid #ccc;
-    background-color: #f9f9f9;
 }
 
 #header {
@@ -423,4 +403,71 @@ body.link-mode-active {
 
 .linked-checkbox-label {
     color: #411818;
+}
+
+/* Flexbox for group and role td elements to align inputs horizontally */
+.group-td, .role-td, .priority-td {
+    display: flex;
+    align-items: center;
+}
+
+.group-td, .role-td {
+    flex-grow: 1; /* Allow cells to grow and fill space */
+    margin-right: 3px; /* Minimal space between cells */
+}
+
+/* Inputs should fill their respective cells */
+.group-td input, .role-td input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Priority td and input adjustments */
+.priority-td {
+    width: 50px;
+    white-space: nowrap;
+    padding: 0 3px; /* Minimal padding */
+}
+
+.priority-td input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Button alignment */
+.delete-btn-td {
+    width: auto;
+    padding-left: 3px; /* Minimal padding */
+}
+
+.delete-btn-td button {
+    display: block;
+    margin: auto 0;
+}
+
+#left {
+    padding: 7px;
+    overflow-y: auto;
+    border-right: 1px solid #ccc;
+}
+
+#right {
+    margin-right:3px;
+    padding: 7px;
+    overflow-y: auto;
+    border-left: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+}
+
+/* Placeholder text for Safari */
+::-webkit-input-placeholder, ::placeholder {
+    color: #7d8553;
+    opacity: .55;
 }
