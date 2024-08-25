@@ -27,8 +27,8 @@ function addGroupToView(groupName) {
     groupMembers.sort((a, b) => {
         const aPriority = a.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
         const bPriority = b.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
-        return aPriority - bPriority;
-    });
+        return bPriority - aPriority; 
+    });    
 
     groupMembers.forEach(member => {
         let memberItem = createMemberItem(member, groupName);
@@ -61,8 +61,8 @@ function displayAllGroups() {
             groupMembers.sort((a, b) => {
                 const aPriority = a.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
                 const bPriority = b.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
-                return aPriority - bPriority;
-            });
+                return bPriority - aPriority; 
+            });   
 
             groupMembers.forEach(member => {
                 let memberItem = createMemberItem(member, groupName);
@@ -119,8 +119,8 @@ function filterGroups(query) {
             groupMembers.sort((a, b) => {
                 const aPriority = a.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
                 const bPriority = b.groups.find(groupObj => groupObj.group === groupName).priority || Infinity;
-                return aPriority - bPriority;
-            });
+                return bPriority - aPriority; 
+            });   
 
             groupMembers.forEach(member => {
                 // Use the centralized createMemberItem function
@@ -132,7 +132,6 @@ function filterGroups(query) {
         }
     });
 }
-
 
 function getLinkedGroups(linkedRecords) {
     const linkedGroups = new Set();
