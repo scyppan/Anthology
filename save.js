@@ -25,7 +25,8 @@ window.addEventListener('beforeunload', function() {
 });
 
 window.addEventListener('load', function() {
-    loadDataFromLocalStorage();
+    try{loadDataFromLocalStorage();}
+    catch{}
 });
 
 function exportDataAsJSON() {
