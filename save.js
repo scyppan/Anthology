@@ -10,7 +10,11 @@ function loadDataFromLocalStorage() {
     if (serializedData) {
         data = JSON.parse(serializedData);
         console.log('Data loaded from localStorage', data);
-        loadgraph(data);
+
+        if(data.length>=1){
+            loadgraph(data);
+        }
+        
     } else {
         console.log('No saved data found in localStorage');
     }
