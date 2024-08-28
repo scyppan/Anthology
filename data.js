@@ -1,24 +1,28 @@
 let data = {};
 
-// Assuming this is in data.js or where you handle loading new data
 document.getElementById('jsoninput').addEventListener('change', async function(event) {
-    const file = event.target.files[0]; // Get the selected file
+    const file = event.target.files[0];
     try {
-        data = await readjson(file); // Read and parse the JSON file
+        let loadedData = await readjson(file);
         
-        // Ensure each record has a unique ID
+        // Ensure loadedData is an array
+        if (!Array.isArray(loadedData)) {
+            loadedData = [loadedData];
+        }
 
         // Check for the 'id' field in the first record
-        if (!data[0].hasOwnProperty('id')) {
+        if (!loadedData[0].hasOwnProperty('id')) {
             throw new Error("The JSON data must contain an 'id' field.");
         }
 
         // Ensure each record has a 'links' field
-        data.forEach(record => {
+        loadedData.forEach(record => {
             if (!record.hasOwnProperty('links')) {
                 record.links = [];
             }
         });
+
+        data = loadedData;
 
         console.log("data loaded");
         document.getElementById('dataview').classList.add('hidden');
@@ -27,8 +31,8 @@ document.getElementById('jsoninput').addEventListener('change', async function(e
         document.getElementById('exportbtn').classList.remove('hidden');
         createtablefromdata();
     } catch (error) {
-        console.error(error); // Handle any errors
-        displayError(error.message); // Display the error message
+        console.error(error);
+        displayError(error.message);
     }
 });
 
