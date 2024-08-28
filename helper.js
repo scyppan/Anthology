@@ -2,12 +2,16 @@ function generateUniqueId(baseId) {
     let uniqueId = baseId;
     let counter = 1;
 
-    console.log("somedata" , data.some((record => record.id === uniqueId)));
+    
+    try{
+        console.log("somedata" , data.some((record => record.id === uniqueId)));
 
-    while (data.some(record => record.id === uniqueId)) {
-        uniqueId = `${baseId} ${counter}`;
-        counter++;
-    }
+        
+        while (data.some(record => record.id === uniqueId)) {
+            uniqueId = `${baseId} ${counter}`;
+            counter++;
+        }
+    }catch{}
 
     return uniqueId;
 }
